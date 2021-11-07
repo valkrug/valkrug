@@ -29,3 +29,23 @@ This is my solutions for the problems published on study platform Stepic.org
 >   fixed_data <- mutate_at(d, var_names, .funs = function(x) ifelse(stri_detect_regex(x, "[[:alpha:]]")==FALSE, 
 > as.numeric(stri_replace_all(x, regex = "[[:space:]]", "")), x))
 > }
+
+# Problem 3. 
+# Imagine that you have a clinical study, there during the seven days should be measured the temperature of the participants. Every participant of the study has their own id.
+# Participants had to come for an examination every day during a whole week. After the end of the study, it turned out that some participants were unable to attend all seven 
+# appointments. Someone after the first time no longer came to the examination, someone missed some days, so. For the purity of the study you need to write a 
+# get_id function that receives list of seven dataframes as an input (with variables: id of the participant and temperature). The function should return a new dataframe, 
+# there will be two variables "id" and "mean_temp" - the average temperature for a week only for those participants who attended all seven appointments, or in other words, 
+# the id of such participants is present in each of the seven dataframes.
+
+# SOLUTION
+> library(dplyr)
+> get_id <- function(data_list){
+>   new_data <- do.call(rbind, lapply(data_list, data.frame))
+>   new_data$id <- as.factor(new_data$id)
+>   new_data %>% 
+>     group_by(id) %>%
+>     summarise(n=n(), mean_temp=mean(temp)) %>%
+>     filter(n==7) %>%
+>     select(-n)
+> }
